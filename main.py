@@ -52,7 +52,7 @@ class ConfigValueModal(discord.ui.Modal, title="Value configuration"):
     await interaction.response.send_message("Configuration saved!", ephemeral=True)
     
 class ConfigLoggingChannelID(discord.ui.Modal, title="Logging channel ID"):
-  channel_id = discord.ui.TextInput(label="Channel ID", placeholder="Enter the ID of the channel", style=discord.TextStyle.short, min_length=18, max_length=18)
+  channel_id = discord.ui.TextInput(label="Channel ID", placeholder="Enter the ID of the channel", style=discord.TextStyle.short, min_length=18, max_length=19)
   async def on_submit(self, interaction: discord.Interaction):
     with open("config.json") as f:
       config = json.load(f)
@@ -145,8 +145,8 @@ async def increase(interaction: discord.Interaction):
   user_id = str(interaction.user.id)
   with open("config.json") as f:
     config = json.load(f)
-  logging_channel_id = int(config["logging_channel_id"])
-  logging_channel = bot.get_channel(int(logging_channel_id))
+  logging_channel_id = (config["logging_channel_id"])
+  logging_channel = bot.get_channel(logging_channel_id)
   banana = 1
   apple = 1
   embed = discord.Embed(title=config["embed"]["title"], description=config["embed"]["description"].format(banana=banana, apple=apple), color=int(config["embed"]["color"], 16))
@@ -192,7 +192,6 @@ async def increase(interaction: discord.Interaction):
       embed.description = config["embed"]["description"].format(banana=banana, apple=apple)
       await msg.edit(embed=embed, view=view)
       await msg2.delete()
-      await interaction.response.send_message(logging_channel_id)
       await logging_channel.send(f"{interaction.user.mention} increased the apple value by {config['value']['apple']}\n Now the apple value is {apple}")
     async def no_button_callback(interaction):
       await interaction.response.send_message("Cancelled", ephemeral=True, delete_after=3)
