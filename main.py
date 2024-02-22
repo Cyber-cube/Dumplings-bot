@@ -56,7 +56,8 @@ class ConfigLoggingChannelID(discord.ui.Modal, title="Logging channel ID"):
   async def on_submit(self, interaction: discord.Interaction):
     with open("config.json") as f:
       config = json.load(f)
-    config["logging_channel_id"] = str(self.channel_id)
+    self.channel_id = str(self.channel_id)
+    config["logging_channel_id"] = int(self.channel_id)
     with open("config.json", "w") as f:
       json.dump(config, f, indent=2)
     await interaction.response.send_message("Configuration saved!", ephemeral=True)
@@ -144,7 +145,8 @@ async def increase(interaction: discord.Interaction):
   user_id = str(interaction.user.id)
   with open("config.json") as f:
     config = json.load(f)
-  logging_channel_id = str(config["logging_channel_id"])
+  logging_channel_id = int(config["logging_channel_id"])
+  logging_channel = bot.get_channel(int(logging_channel_id))
   banana = 1
   apple = 1
   embed = discord.Embed(title=config["embed"]["title"], description=config["embed"]["description"].format(banana=banana, apple=apple), color=int(config["embed"]["color"], 16))
@@ -169,12 +171,10 @@ async def increase(interaction: discord.Interaction):
       embed.description = config["embed"]["description"].format(banana=banana, apple=apple)
       await msg.edit(embed=embed, view=view)
       await msg2.delete()
-      logging_channel = await bot.get_channel(int(logging_channel_id))
       await logging_channel.send(f"{interaction.user.mention} increased the apple value by {config['value']['apple']}\n Now the apple value is {apple}")
     async def no_button_callback(interaction):
       await interaction.response.send_message("Cancelled", ephemeral=True, delete_after=3)
       await msg2.delete()
-      logging_channel = await bot.get_channel(int(logging_channel_id))
       await logging_channel.send(f"{interaction.user.mention} cancelled the increase of the apple value")
     yes_button.callback = yes_button_callback
     no_button.callback = no_button_callback
@@ -192,12 +192,11 @@ async def increase(interaction: discord.Interaction):
       embed.description = config["embed"]["description"].format(banana=banana, apple=apple)
       await msg.edit(embed=embed, view=view)
       await msg2.delete()
-      logging_channel = await bot.get_channel(int(logging_channel_id))
+      await interaction.response.send_message(logging_channel_id)
       await logging_channel.send(f"{interaction.user.mention} increased the apple value by {config['value']['apple']}\n Now the apple value is {apple}")
     async def no_button_callback(interaction):
       await interaction.response.send_message("Cancelled", ephemeral=True, delete_after=3)
       await msg2.delete()
-      logging_channel = await bot.get_channel(int(logging_channel_id))
       await logging_channel.send(f"{interaction.user.mention} cancelled the increase of the banana value")
     yes_button.callback = yes_button_callback
     no_button.callback = no_button_callback
