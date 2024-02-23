@@ -201,63 +201,6 @@ async def increase(interaction: discord.Interaction):
     no_button.callback = no_button_callback
   increase_apple.callback = increase_apple_callback
   increase_banana.callback = increase_banana_callback
-
-@bot.command()
-async def increase(ctx):
-  user_id = str(ctx.message.author.id)
-  await ctx.message.delete()
-  with open("config.json") as f:
-    config = json.load(f)
-  banana = 1
-  apple = 1
-  embed = discord.Embed(title=config["embed"]["title"], description=config["embed"]["description"].format(banana=banana, apple=apple), color=int(config["embed"]["color"], 16))
-  view = discord.ui.View()
-  increase_apple = discord.ui.Button(label=config["button_label"]["apple"], style=discord.ButtonStyle.green)
-  increase_banana = discord.ui.Button(label=config["button_label"]["banana"], style=discord.ButtonStyle.green)
-  view.add_item(increase_apple)
-  view.add_item(increase_banana)
-  msg = await ctx.send(embed=embed, view=view)    
-  
-  async def increase_apple_callback(interaction):
-    await interaction.response.defer()
-    view2 = discord.ui.View()
-    yes_button = discord.ui.Button(label="Yes", style=discord.ButtonStyle.green)
-    no_button = discord.ui.Button(label="No", style=discord.ButtonStyle.red)
-    view2.add_item(yes_button)
-    view2.add_item(no_button)
-    msg2 = await interaction.followup.send(content="Are you sure you want to increase the apple value?", view=view2, ephemeral=True)
-    async def yes_button_callback(interaction):
-      nonlocal apple
-      apple += int(config["value"]["apple"])
-      embed.description = config["embed"]["description"].format(banana=banana, apple=apple)
-      await msg.edit(embed=embed, view=view)
-      await msg2.delete()
-    async def no_button_callback(interaction): 
-      interaction.response.send_message("Cancelled", ephemeral=True)
-      msg2.delete()
-    yes_button.callback = yes_button_callback
-    no_button.callback = no_button_callback
-  async def increase_banana_callback(interaction):
-    view2 = discord.ui.View()
-    yes_button = discord.ui.Button(label="Yes", style=discord.ButtonStyle.green)
-    no_button = discord.ui.Button(label="No", style=discord.ButtonStyle.red)
-    view2.add_item(yes_button)
-    view2.add_item(no_button)
-    msg2 = await interaction.followup.send(content="Are you sure you want to increase the banana value?", view=view2, ephemeral=True)
-    async def yes_button_callback(interaction):
-      nonlocal banana
-      banana += int(config["value"]["apple"])
-      embed.description = config["embed"]["description"].format(banana=banana, apple=apple)
-      await msg.edit(embed=embed, view=view)
-      await msg2.delete()
-    async def no_button_callback(interaction): 
-      interaction.response.send_message("Cancelled", ephemeral=True)
-      await msg2.delete()
-    yes_button.callback = yes_button_callback
-    no_button.callback = no_button_callback
-  increase_apple.callback = increase_apple_callback
-  increase_banana.callback = increase_banana_callback
-
   
 keep_alive()
 bot.run(str(os.environ['TOKEN']))
